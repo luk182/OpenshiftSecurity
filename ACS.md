@@ -25,22 +25,23 @@ This guide will cover how to deploy a simple ACS cluster with these integrations
 
 ## 1. Deploying RHASC
 ### 1.1 Deploying ACS
-[System requirements for ACS](https://docs.openshift.com/acs/3.69/installing/prerequisites.html)
+[System requirements for ACS](https://docs.openshift.com/acs/3.69/installing/prerequisites.html) <br>
+
 [Architecture and components](https://docs.openshift.com/acs/3.69/architecture/acs-architecture.html)
 
 ACS has two main components: Central and Secured Cluster.
 
-In a nutshell *Central* is the management portal and Secured Cluster the component that provides protectio to the cluster. Each protected cluster needs a *Secured Cluster*, but you could have a single *Central* component connected to every *Secured Cluster*. <br>
+In a nutshell *Central* is the management portal and Secured Cluster the component that provides protection to the cluster. Each protected cluster needs a *Secured Cluster*, but you could have a single *Central* component connected to every *Secured Cluster*. <br>
 *Central* and *Secured Cluster* can of course be deployed in the same cluster, just as we will do in this guide.
 
 <br>
 
 1. From the Operator Hub, search and deploy the *Advanced Cluster Security for Kubernetes* Operator, you can leave the default options, this will take a few minutes
 2. Once deployed, go to *Installed Operators* and select *Advanced Cluster Security for Kubernetes*. Click on *Central* and deploy an instance of it. You can leave the default options
-3. Now we need to log into the RHACS portal. You can obtain the admin password from the *central-htpasswd* secret n the *rhacs-operator* namespace. Is the secret called *password*.
-4. You can obtain the URL from the *central* route in the *rhacs-operator* namespace. Username is admin and the password is the secret from step 3.
+3. Now we need to log into the RHACS portal. You can obtain the **admin** password from the *central-htpasswd* secret in the *rhacs-operator* namespace. Is the field called *password*.
+4. You can obtain the URL from the *central* route in the *rhacs-operator* namespace. Username is **admin** and the password is the secret from step 3.
 5. We are going to export a configuration yaml that will allow us to connect the future *Secured Cluster* we are going to deploy to this *Central*. From ACS console, go to *Platform Configuration > Clusters*.
-6. Click on Manage Tokens in the top right corner. Select *Cluster Init Bundle*. Click on Generate Bundle and Download the Kubernetes secrets file (any name will do).
+6. Click on *Manage Tokens* in the top right corner. Select *Cluster Init Bundle*. Click on *Generate Bundle* and Download the Kubernetes secrets file (any name will do).
 7. From the shell, apply the yaml you just downloaded with  `oc create -f secretfile.yaml -n rhacs-operator`
 8. Go back to *Installed Operators* and select *Advanced Cluster Security for Kubernetes*. Click on *Secured Cluster* and deploy an instance of it.
 9. Switch to form view. The *Central Endpoint* field requires the route for *central*, ie central.example.com:443. In our case since we are deploying in the same cluster we can it leave empty. We can leave the remaining options as default, and click Create.
