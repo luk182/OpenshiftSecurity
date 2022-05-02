@@ -48,9 +48,22 @@ In a nutshell *Central* is the management portal and Secured Cluster the compone
 ![image](https://user-images.githubusercontent.com/75438200/166227544-cce99568-20e8-45da-be26-21d4f928ac73.png)
 
 ## 2. Integrating with Qradar
-You can configure your ACS policies to generate alerts when triggered. The alerts can go to many 3rd party systems for different uses, and in this case we will explore forwarding these alerts to Qradar. For example: Alert when someone tries to deploy an image with known vulnerabilities with a CVSS over 7 (High and Critical).
-Triggering such policy would send an event to Qradar, and in Qradar we would have created a rule to raise an "Offense" upon receiving that sort of event.
-Let's look into that.
+ACS policies can be configured to generate alerts when triggered. These alerts can be routed to a variety of receivers, like Slack or Microsoft Teams for example.
+In this example we will configure an integratoin to forward these alerts to Qradar.
+To showcase a valid usecase, we are going to use an out of the box ACS policy which triggers when someone tries to deploy an image with known vulnerabilities with a CVSS over 7 (High and Critical).
 
-1.
+<br>
 
+### Adding the Log Source in Qradr
+1. From the Qradar console, go to *Admin* > *Log Sources* and launch the app
+2. Create a new log source based on the type **Red Hat Advanced Cluster Security**
+3. Key paraments to pay attention to: **Protocol** (HTTP or HTTPS), **Port**, And **Log source identifier**. For example: *acs.testcluster.com*. <br> After the Log Source is deployed, Qradar will need to restart its services.
+### Configuring ACS integration
+4. From the ACS portal, go to *Platform Configuration* > *Integrations*.
+6. Click on Generic Webhook Integratoin
+7. On endpoint, use https://qradarname:port if you are using http, otherwise same but using http://
+8. Copy the Qradar CA certificate content to the *CA certificate*
+9. Add a new Header, key is *hostname*, and value is the log source identifier defined earlier. *acs.testcluster.com*
+10. Click on *Test* to test the integration. If it works, Save it.
+
+![image](https://user-images.githubusercontent.com/75438200/166304686-cd4ce623-20f8-4d3a-86d2-0c4441273eb3.png)
