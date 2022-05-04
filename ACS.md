@@ -9,17 +9,8 @@ This guide will cover how to deploy a simple ACS cluster with these integrations
 
 ### Activities
 #### 1. Deploying RHASC
-- 1.1 Creating Log Sources
-- 1.2 Increasing Event size limit
-#### 2. Configuring Qradar integration
-- 2.1 Enabling Audit logs
-- 2.2 Installing Logging Operators
-- 2.3 Deploying an instance of Logging Operator
-- 2.4 Deploying an instance of Logging Forwarder Operator
-#### 3. Configuring a CP4S SOAR integration
-- 3.1 Refine DSM
-- 3.2 Estimate EPS
-
+#### 2. Integration with Qradar
+#### 3. Integration with CP4S SOAR
 
 <br>
 
@@ -49,12 +40,12 @@ In a nutshell *Central* is the management portal and Secured Cluster the compone
 
 ## 2. Integrating with Qradar
 ACS policies can be configured to generate alerts when triggered. These alerts can be routed to a variety of receivers, like Slack or Microsoft Teams for example.
-In this example we will configure an integratoin to forward these alerts to Qradar.
+In this example we will configure an integration to forward these alerts to Qradar.
 To showcase a valid usecase, we are going to use an out of the box ACS policy which triggers when someone tries to deploy an image with known vulnerabilities with a CVSS over 7 (High and Critical).
 
 <br>
 
-### Adding the Log Source in Qradr
+### Adding the Log Source in Qradar
 1. From the Qradar console, go to *Admin* > *Log Sources* and launch the app
 2. Create a new log source based on the type **Red Hat Advanced Cluster Security**
 3. Key paraments to pay attention to: **Protocol** (HTTP or HTTPS), **Port**, And **Log source identifier**. For example: *acs.testcluster.com*. <br> After the Log Source is deployed, Qradar will need to restart its services.
@@ -69,4 +60,48 @@ To showcase a valid usecase, we are going to use an out of the box ACS policy wh
 ![image](https://user-images.githubusercontent.com/75438200/166304686-cd4ce623-20f8-4d3a-86d2-0c4441273eb3.png)
 
 ## 3. Integrating with Cloud Pak for Security SOAR
-Instead of integrating 
+Raising Offenses in Qradar upon Policy Violations is useful. But raising an incident/case in a SOAR tool for proper investigation is even better.
+In this guide we will see how to automatically create cases on CP4S SOAR. As a pre-requisite, we would need to be using the functionality to create cases from an email on CP4S.
+
+<br>
+
+First we will need a mailbox that can be integrated to CP4S. Emails received on this address will automatically create cases under defined circumstances.
+For the first few steps of the email integration I'm going to refer you to the official IBM CP4S documentation, for version 1.9
+
+1. [Creating an email Connection](https://www.ibm.com/docs/en/cloud-paks/cp-security/1.9?topic=email-lesson-1-creating-connection)
+2. [Assigning email permissions](https://www.ibm.com/docs/en/cloud-paks/cp-security/1.9?topic=email-lesson-2-assigning-permissions)
+3. [Configuring a email script](https://www.ibm.com/docs/en/cloud-paks/cp-security/1.9?topic=email-lesson-3-configuring-sample-script) 
+On this step we are going to modify the default script. We want the content of the email to be added as *Note* in the newly created case, so the analysts working on the case will have the all the useful information from the alert available to work with.
+For this to happen, we will add a single line of code, on the script line **323**: `incident.addNote(emailmessage.body.content)` <br>
+You could also modify the logic behind the naming of the incident that is about to be created, in line *532 newIncidentTitle*.
+
+<br>
+
+![image](https://user-images.githubusercontent.com/75438200/166680058-3a8ede66-2ade-442a-a0f4-9587a06b9894.png)
+
+4. CP4S is now connected to a mailbox and checking every email received without taking any action. <br> We are going to define a rule to create cases when receiving emails coming from a certain sender. <br> From the CP4S portal, go to *Application settings* > *Case Management* > *Customization*.
+5. Click on the *Rules* tab, and create a new Rule.
+6. Add two conditions. One is *Email Message is created*, the other one is *From Address is equal to* the sender address that ACS uses to send email alerts.
+7. In Activities, select *Run Script* and choose the script that was created on step 3. Click on *Save and Close*.
+
+![image](https://user-images.githubusercontent.com/75438200/166683247-3c49aaf6-2c3d-4c65-b3ed-28aec67bc30c.png)
+
+8. Now that CP4S can create cases from emails, we will configure the integration at Red Hat Advanced Cluster Security. <br>
+From the ACS portal, go to *Platform Configuration* > *Integrations*.
+10. Select Email, and create a new integration to your SMTP server. <br> Remember that the **SENDER** address will need to match the one you defined on step 7. You can test the integration by clicking on *Test*. 
+11. After the email integration is configured, you can proceed to modify your ACS Policies to **NOTIFY** upon detection, and select this email integration as the notification method. That would be the last step.
+
+![image](https://user-images.githubusercontent.com/75438200/166684850-c8e8145c-3e7d-4219-b3da-5198064f3d4c.png)
+
+
+![image](https://user-images.githubusercontent.com/75438200/166684250-7fd9fad0-3b0d-4327-ac9e-fac4aa3c8400.png)
+
+
+
+
+
+
+
+
+
+
