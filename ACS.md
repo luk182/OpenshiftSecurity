@@ -2,10 +2,8 @@
 ## Part 2. Deploying Red Hat Advanced Security Cluster and integrating it with Qradar and CP4S SOAR
 
 Red Hat Advanced Security Cluster enables various security use cases: Compliance, Risk Profiling, Vulnerability Management, 1-click network policies and a vast range of customizable security policies to monitor and block risky activities. <br>
-Moreover, the solution can be integrated with CICD tooling to block unwanted resources to be deployed in your environment. <br>
-We can further extend the value of the tool by integrating it with Qradar to create offenses under certain specific scenarios, or if available, with CP4S SOAR to automatically create cases and asign them to security engineers from your organization SOC.
-This guide will cover how to deploy a simple ACS cluster with these integrations.
-
+But detection only is never enough: We would also want to alert the right people when a policy is violated so they can take relevant action. <br>
+In this guide we will cover how to deploy a RHACS platform using default settings, and how to ingreate it with Qradar to raise Offenses and with CP4S SOAR to create cases. Of course both integrations in simultaneous are not very useful, but you are welcome to choose the one that works better for you. <br>
 
 ### Activities
 #### 1. Deploying RHASC
