@@ -67,3 +67,6 @@ To showcase a valid usecase, we are going to use an out of the box ACS policy wh
 10. Click on *Test* to test the integration. If it works, Save it.
 
 ![image](https://user-images.githubusercontent.com/75438200/166304686-cd4ce623-20f8-4d3a-86d2-0c4441273eb3.png)
+
+## 3. Integrating with Cloud Pak for Security SOAR
+Instead of integrating 
